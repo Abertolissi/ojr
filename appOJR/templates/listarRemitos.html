@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Transporte</th>
+        <th>Numero</th>
+        <th>Barco</th>
+        <th>Puerto</th>
+        <th>Combustible</th>
+        <th>fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    <!-- Recorremos los registros de la tabla  y los mostramos -->
+    {% for remito in object_list %}
+      <tr>
+        <td>{{ remito.transporte }}</td>
+        <td>{{ remito.numero }}</td>
+        <td>{{ remito.barco }}</td>
+        <td>{{ remito.puerto }}</td>
+        <td>{{ remito.combustible }}</td>
+        <td>{{ remito.fecha |date:"d/m/Y"  }}</td>
+        <td>
+          
+   
+          <!-- Formulario para eliminar un registro desde la misma tabla HTML -->                        
+          <form method="POST" action="eliminar/{{remito.id}}">
+            {% csrf_token %}
+            <div class="btn-group">
+   
+              <!-- Creamos 3 botones Detalle, Editar y Eliminar -->
+              <a href="editar/{{remito.id}}" title="Editar" type="button" class="btn btn-primary">Editar </a>
+              <a href="generarRemitoCombustible/{{remito.id}}/brother" title="GenerarRemito" type="button" class="btn btn-warning">Remito Brother</a>
+              <a href="generarRemitoCombustible/{{remito.id}}/laser" title="GenerarRemito" type="button" class="btn btn-success">Remito Laser</a>
+              <button class="btn btn-danger" onclick="return eliminar();" type="submit">
+              Eliminar
+              </button>
+            </div>
+          </form>
+   
+        </td>
+      </tr>
+    {% endfor %}
+   
+    </tbody>
+  </table>
+{% endblock %}

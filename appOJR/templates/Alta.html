@@ -1,0 +1,14 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <!-- Agrega aquí los campos adicionales del modelo relacionado -->
+    <label for="id_modelo_relacionado">Modelo Relacionado:</label>
+    <select name="modelo_relacionado" id="id_modelo_relacionado">
+        {% for modelo_relacionado in form.instance.modelorelacionado_set.all %}
+            <option value="{{ modelo_relacionado.pk }}">{{ modelo_relacionado }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="submit" value="Guardar">
+</form>

@@ -1,0 +1,48 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>Nombre</th>
+        <th>Cuit</th>
+        <th>Direccion</th>
+        <th>Telefono</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    <!-- Recorremos los registros de la tabla 'contactos' y los mostramos -->
+    {% for armadora in object_list %}
+      <tr>
+        <td>{{ armadora.id}}</td>
+        <td>{{ armadora.nombre }}</td>
+        <td>{{ armadora.cuit }}</td>
+        <td>{{ armadora.direccion }}</td>
+        <td>{{ armadora.telefono }}</td>
+        <td>{{ armadora.email }}</td>
+        <td>
+   
+          <!-- Formulario para eliminar un registro desde la misma tabla HTML -->                        
+          <form method="POST" action="eliminar/{{armadora.id}}">
+            {% csrf_token %}
+            <div class="btn-group">
+   
+              <!-- Creamos 3 botones Detalle, Editar y Eliminar -->
+              <a href="editar/{{armadora.id}}" title="Editar" type="button" class="btn btn-primary">Editar </a>
+              <button class="btn btn-danger" type="submit">
+              Eliminar
+              </button>
+            </div>
+          </form>
+   
+        </td>
+      </tr>
+    {% endfor %}
+   
+    </tbody>
+  </table>
+{% endblock %}

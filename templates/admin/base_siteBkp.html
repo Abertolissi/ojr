@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Mi Administración Personalizada{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">Mi Administración Personalizada</a></h1>
+{% endblock %}
+
+{% block nav-global %}
+<ul>
+    <li><a href="{% url 'admin:index' %}">Inicio</a></li>
+
+    <li><a href="{% url 'admin:logout' %}">Cerrar sesión</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+
+{% if custom_menu_links %}
+    <ul>
+        {% for link in custom_menu_links %}
+            <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}
+
+

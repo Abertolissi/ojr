@@ -1,0 +1,92 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<div class="container">
+	<h2>Añadir Remito</h2>
+</div>
+<div class="container">
+
+	{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+			{% endfor %}
+	</ul>
+	{% endif %}
+
+	{% if form.subject.errors %}
+	<ol>
+		{% for error in form.subject.errors %}
+		<li><strong>{{ error|escape }}</strong></li>
+		{% endfor %}
+	</ol>
+	{% endif %}
+
+	<form method="post">
+		{% csrf_token %}
+		<table class="table">
+			<tbody>
+				<tr>
+					<th><label>Transporte:</label></th>
+					<td>{{form.transporte }}</td>
+				</tr>
+				<tr>
+					<th><label>Numero:</label></th>
+					<td>{{form.numero }}</td>
+				</tr>
+				
+				<tr>
+					<th><label>Barco:</label></th>
+					<td>{{form.barco }}</td>
+				</tr>
+				<tr>
+					<th><label>Puerto:</label></th>
+					<td>{{form.puerto }}</td>
+				</tr>
+				<tr>
+					<th><label>Chofer:</label></th>
+					<td>{{form.chofer}}</td>
+				</tr>
+				<tr>
+					<th><label>Camion:</label></th>
+					<td>{{form.camion}}</td>
+				</tr>
+				<tr>
+					<th><label>Remolque:</label></th>
+					<td>{{form.remolque}}</td>
+				</tr>
+				<tr>
+					<th><label>Combustible:</label></th>
+					<td>{{form.combustible }} </td>
+				</tr>		
+				<tr>
+					<th><label>Cantidad M2 Barco:</label></th>
+					<td>{{form.cantidadBarco }}</td>
+				</tr>
+				<tr>
+					<th><label>Cantidad M2 Deposito:</label></th>
+					<td>{{form.cantidadDeposito }}</td>
+				</tr>
+				<tr>
+					<th><label>Densidad:</label></th>
+					<td>{{form.densidad }}</td>
+				</tr>
+				<tr>
+					<th><label>Temperatura:</label></th>
+					<td>{{form.temperatura }}</td>
+				</tr>
+				<tr>
+					<th><label>Fecha:</label></th>
+					<td><input type="date" class="form-control" id="fecha" name="fecha"
+							required>
+					</td>
+				</tr>
+</div>
+
+
+</table>
+<button type="submit" value="Submit" class="btn btn-primary">Añadir Remito</button>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+
+
+{% if custom_menu_links %}
+    <ul>
+        {% for link in custom_menu_links %}
+            <li><a href="{{ link.url }}">{{ link.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{{ block.super }}
+{% endblock %}

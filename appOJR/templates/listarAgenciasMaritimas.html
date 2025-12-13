@@ -1,0 +1,48 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th >Nombre</th>
+        <th>Dueño</th>
+        <th>Direccion</th>
+        <th>Telefono</th>
+        <th>Email</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+    
+    <!-- Recorremos los registros de la tabla 'contactos' y los mostramos -->
+    {% for agenciaMaritima in object_list %}
+      <tr>
+        <td>{{ agenciaMaritima.nombre }}</td>
+        <td>{{ agenciaMaritima.dueno }}</td>
+        <td>{{ agenciaMaritima.direccion }}</td>
+        <td>{{ agenciaMaritima.telefono }}</td>
+        <td>{{ agenciaMaritima.email }}</td>
+        <td>
+   
+          <!-- Formulario para eliminar un registro desde la misma tabla HTML -->                        
+          <form method="POST" action="eliminar/{{agenciaMaritima.id}}">
+            {% csrf_token %}
+            <div class="btn-group">
+   
+              <!-- Creamos 3 botones Detalle, Editar y Eliminar -->
+              <a href="detalle/{{agenciaMaritima.id}}" title="Detalle" type="button" class="btn btn-success">Ver </a>
+              <a href="editar/{{agenciaMaritima.id}}" title="Editar" type="button" class="btn btn-primary">Editar </a>
+              <button class="btn btn-danger" onclick="return eliminar();" type="submit">
+              Eliminar
+              </button>
+            </div>
+          </form>
+   
+        </td>
+      </tr>
+    {% endfor %}
+   
+    </tbody>
+  </table>
+{% endblock %}

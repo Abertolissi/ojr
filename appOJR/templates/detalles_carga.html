@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles de Carga y Remitos</title>
+</head>
+<body>
+    <h1>Detalles de Carga</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ carga_form.as_p }}
+        <button type="submit">Guardar Cambios</button>
+    </form>
+
+    <h2>Remitos</h2>
+    <ul>
+    {% for remito in remitos %}
+        <li>Número: {{ remito.numero }}, Transporte: {{ remito.transporte }}</li>
+    {% empty %}
+        <li>No hay remitos asociados.</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Agregar Remito</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+</body>
+</html>

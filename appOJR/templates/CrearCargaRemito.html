@@ -1,0 +1,148 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+<script>
+
+// Función para agregar una nueva fila de remito
+function agregarRemito() {
+  var table = document.getElementById("remitosTable");
+  var row = table.insertRow();
+  var cell1 = row.insertCell();
+  var cell2 = row.insertCell();
+  var cell3 = row.insertCell();
+  var cell4 = row.insertCell();
+  var cell5 = row.insertCell();
+  var cell6 = row.insertCell();
+  var cell7 = row.insertCell();
+  var cell8 = row.insertCell();
+  cell1.innerHTML = '<input type="text" name="remito_numero[]" class="form-control">';
+  cell2.innerHTML = '<td><select name="remito_chofer[]" class="form-control">{% for chofer in choferes %}<option value="{{ chofer.id }}">{{ chofer.nombre }}</option>{% endfor %}</select></td>';
+  cell3.innerHTML = '<td><select name="remito_camion[]" class="form-control">{% for camion in camiones %}<option value="{{ camion.id }}">{{ camion.patente }}</option>{% endfor %}</select></td>';					
+  cell4.innerHTML = '<td><select name="remito_remolque[]" class="form-control">{% for remolque in remolques %}<option value="{{ remolque.id }}">{{ remolque.patente }}</option>{% endfor %}</select></td>';
+  cell5.innerHTML = '<input type="number" name="remito_cantidad_m2_barco[]" class="form-control">';
+  cell6.innerHTML = '<input type="number" name="remito_cantidad_m2_deposito[]" class="form-control">';
+  cell7.innerHTML = '<input type="number" name="remito_densidad[]" class="form-control">';
+  cell8.innerHTML = '<input type="number" name="remito_temperatura[]" class="form-control">';
+}
+
+// Función para eliminar la última fila de remito
+function eliminarRemito() {
+  var table = document.getElementById("remitosTable");
+  var rowCount = table.rows.length;
+  if (rowCount > 1) {
+	  table.deleteRow(rowCount - 1);
+  }
+}
+
+
+</script>
+
+<div class="container">
+	<h2>Añadir Carga</h2>
+</div>
+<div class="container">
+
+	{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+		<li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+			{% endfor %}
+	</ul>
+	{% endif %}
+
+	{% if form.subject.errors %}
+	<ol>
+		{% for error in form.subject.errors %}
+		<li><strong>{{ error|escape }}</strong></li>
+		{% endfor %}
+	</ol>
+	{% endif %}
+
+	<form method="post">
+		{% csrf_token %}
+		<table class="table">
+			<tbody>
+				<tr>
+					<th><label>Barco:</label></th>
+					<td>{{ form.barco }}</td>
+				</tr>
+				<tr>
+					<th><label>Puerto:</label></th>
+					<td>{{ form.puerto }}</td>
+				</tr>
+				<tr>
+					<th><label>Sitio:</label></th>
+					<td>{{ form.sitioPuerto }}</td>
+				</tr>
+				<tr>
+					<th><label>Combustible:</label></th>
+					<td>{{ form.combustible }}</td>
+				</tr>
+				<tr>
+					<th><label>Cantidad M2:</label></th>
+					<td>{{ form.cantidad }}</td>
+				</tr>
+				<tr>
+					<th><label>Fecha:</label></th>
+					<td><input type="datetime-local" class="form-control" id="fechaHoraInicio" name="fechaHoraInicio" required></td>
+				</tr>
+				<!-- Aquí puedes agregar campos adicionales relacionados con la carga -->
+			</tbody>
+		</table>
+		
+		<h3>Remitos Asociados:</h3>
+		<table class="table table-striped" id="remitosTable">
+			<thead>
+				<tr>
+					<th>Número</th>
+					<th>Chofer</th>
+					<th>Camión</th>
+					<th>Remolque</th>
+					<th>Cantidad M2 Barco</th>
+					<th>Cantidad M2 Depósito</th>
+					<th>Densidad</th>
+					<th>Temperatura</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- Aquí puedes permitir al usuario ingresar múltiples remitos -->
+				<tr>
+					<td width="10"><input type="text" name="remito_numero[]" class="form-control"></td>
+					<td width="100">
+						<select name="remito_chofer[]" class="form-control">
+							{% for chofer in choferes %}
+								<option value="{{ chofer.id }}">{{ chofer.nombre }}</option>
+							{% endfor %}
+						</select>
+					</td>
+					<td width="80">
+						<select name="remito_camion[]" class="form-control">
+							{% for camion in camiones %}
+								<option value="{{ camion.id }}">{{ camion.patente }}</option>
+							{% endfor %}
+						</select>
+					</td>
+					<td width="80">
+						<select name="remito_remolque[]" class="form-control">
+							{% for remolque in remolques %}
+								<option value="{{ remolque.id }}">{{ remolque.patente }}</option>
+							{% endfor %}
+						</select>
+					</td>
+					<td width="80"><input type="number" name="remito_cantidad_m2_barco[]" class="form-control"></td>
+					<td width="80"><input type="number" name="remito_cantidad_m2_deposito[]" class="form-control"></td>
+					<td width="20"><input type="number" name="remito_densidad[]" class="form-control"></td>
+					<td width="20"><input type="number" name="remito_temperatura[]" class="form-control"></td>
+				</tr>
+			</tbody>
+		</table>
+		<button type="button" class="btn btn-success"onclick="agregarRemito()">Agregar Remito</button>
+		<button type="button" class="btn btn-danger" onclick="eliminarRemito()">Eliminar Remito</button>
+		<br>
+		<div class="container" style="text-align: right;" 	 >
+			<button type="submit" value="Submit" class="btn btn-primary">Añadir Carga</button>
+		</div>
+	</form>
+</div>
+{% endblock %}
