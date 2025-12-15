@@ -1,147 +1,139 @@
-<!DOCTYPE html>  
-<html lang="en"> 
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> 
-	<title>Orlando Jorge Robert</title> 
- 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
- {% load static %} <!-- Cargar URL raíz -->
- <link rel="stylesheet" href="{% static 'appOJR/css/appOJR.css' %}">
- <link rel="icon" href="static/appOJR/favicon.ico">
-<!-- <script src="{% static '/appOJR/funciones.js' %}"></script> -->
- 
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Orlando Jorge Robert</title>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	{% load static %} <!-- Cargar URL raíz -->
+	<link rel="stylesheet" href="{% static 'appOJR/css/appOJR.css' %}">
+	<link rel="icon" href="static/appOJR/favicon.ico">
 </head>
- 
+
 <body>
 
-<!--Menú y barra superior -->
-<div class="container-fluid">
-	<!-- Logo e iniciales -->
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">		
-		<div class="container-fluid">
-			<!--Botón que sustituye al menú en dispositivos móviles -->
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu_principal" aria-controls="menu_principal" aria-expanded="false" aria-label="Menú">
-			<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			<!-- Logotipo y siglas -->
-			<a class="navbar-brand" href="index"> 
-				<img alt="Orlando Jorge Robert" class="d-inline-block align-text-top"/>
-			</a>			
- 	 		
-			<div class="collapse navbar-collapse" id="menu_principal">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-   			 <!-- Menu Barcos -->
-					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="/" id="submenu_principal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="glyphicon glyphicon-time"></i>
-							Barcos</a>						
-						<!-- Iniciamos principio del grupo (menú) -->
-						<ul class="dropdown-menu" aria-labelledby="submenu_principal">						
-								<li><a class="dropdown-item" href="{% url 'listarBarcos' %}">
-									<i class="glyphicon glyphicon-th-list"></i>
-									Listado</a>								
-								</li>
-								<li><a class="dropdown-item" href="{% url 'nuevoBarco' %}">
-									<i class="glyphicon glyphicon-plus"></i>
-									Nuevo</a>								
-								</li>
-							</ul> <!-- Cierra la lista de submenús del grupo -->
-					</li> <!-- Cierra el grupo de submenús del menú principal -->	
-		     <!-- Menu Agencias Maritimas -->
-					 <li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle" href="/" id="submenu_principal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="glyphicon glyphicon-time"></i>
-							Armadora</a>						
-						<!-- Iniciamos principio del grupo (menú) -->
-						<ul class="dropdown-menu" aria-labelledby="submenu_principal">						
-								<li><a class="dropdown-item" href="{% url 'listarArmadoras' %}">
-									<i class="glyphicon glyphicon-th-list"></i>
-									Listado</a>								
-								</li>
-								<li><a class="dropdown-item" href="{% url 'nuevaArmadora' %}">
-									<i class="glyphicon glyphicon-plus"></i>
-									Nuevo</a>								
-								</li>
-							</ul> <!-- Cierra la lista de submenús del grupo -->
-					</li> <!-- Cierra el grupo de submenús del menú principal -->	
-			<!-- Menu Cargas -->								
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="/" id="submenu_principal2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<i class="glyphicon glyphicon-time"></i>
-					Cargas</a>						
-				<!-- Iniciamos principio del grupo (menú) -->
-				<ul class="dropdown-menu" aria-labelledby="submenu_principal2">						
-						<li><a class="dropdown-item" href="{% url 'listarCargas' %}">
-							<i class="glyphicon glyphicon-th-list"></i>
-							Listado</a>								
-						</li>
-						
-						
-						
-						
+	<!--Menú y barra superior -->
+	<div class="container-fluid">
+		<!-- Logo e iniciales -->
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<div class="container-fluid">
+				<!--Botón que sustituye al menú en dispositivos móviles -->
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu_principal"
+					aria-controls="menu_principal" aria-expanded="false" aria-label="Menú">
+					<span class="navbar-toggler-icon"></span>
+				</button>
 
-					</ul> <!-- Cierra la lista de submenús del grupo -->
-				</li>
-			</li> <!-- Cierra el grupo de submenús del menú principal -->							
-		
-			<!-- Menu Remitos -->								
-					<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="/" id="submenu_principal2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<i class="glyphicon glyphicon-time"></i>
-						Remitos</a>						
-					<!-- Iniciamos principio del grupo (menú) -->
-					<ul class="dropdown-menu" aria-labelledby="submenu_principal2">						
-							<li><a class="dropdown-item" href="{% url 'listarRemitos' %}">
-								<i class="glyphicon glyphicon-th-list"></i>
-								Listado</a>								
-							</li>
-							<li><a class="dropdown-item" href="{% url 'nuevoRemitoCombustible' %}">
-								<i class="glyphicon glyphicon-plus"></i>
-								Nuevo Combustible</a>								
-							</li>
-							<li><a class="dropdown-item" href="{% url 'nuevoRemitoVarios' %}">
-								<i class="glyphicon glyphicon-plus"></i>
-								Nuevo Varios</a>								
-							</li>
-						</ul> <!-- Cierra la lista de submenús del grupo -->
-					</li>
-				</li> <!-- Cierra el grupo de submenús del menú principal -->							
-    			</ul> <!-- Cierra el menú principal con los menús y submenús -->
-			</div> <!-- container para menús diferentes (principal con grupos y submenus) -->
-	<!-- Menú derecha para usuario y cierre de sesión -->	
-	<div class="collapse navbar-collapse" id="menu_principal">
-		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" href="#" id="submenu_principal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-					<i class="fas fa-user">Opciones Generales</i>
+				<!-- Logotipo y siglas -->
+				<a class="navbar-brand" href="index">
+					<img alt="Orlando Jorge Robert" class="d-inline-block align-text-top" />
 				</a>
-				<ul class="dropdown-menu" aria-labelledby="submenu_principal">
-					<li><a class="dropdown-item" href="{% url 'admin:index' %}">
-						<i class="glyphicon glyphicon-th-list"></i>Administracion</a>								
-					</li>
-					
-				</ul>
-			</li>
-		</ul>			
+
+				<div class="collapse navbar-collapse" id="menu_principal">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+						<!-- Menu Empresas -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="menu_empresas" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Empresas</a>
+							<ul class="dropdown-menu" aria-labelledby="menu_empresas">
+								<li><a class="dropdown-item" href="{% url 'listarAgenciasMaritimas' %}">Agencias
+										Marítimas</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarArmadoras' %}">Armadoras</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarContactosAgencia' %}">Contactos
+										Agencia</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarClientes' %}">Clientes</a></li>
+							</ul>
+						</li>
+
+						<!-- Menu Logística -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="menu_logistica" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Logística</a>
+							<ul class="dropdown-menu" aria-labelledby="menu_logistica">
+								<li><a class="dropdown-item" href="{% url 'listarBarcos' %}">Barcos</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarTransportes' %}">Transportes</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarChoferes' %}">Choferes</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarCamiones' %}">Camiones</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarRemolques' %}">Remolques</a></li>
+							</ul>
+						</li>
+
+						<!-- Menu Maestros -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="menu_maestros" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Tablas Maestras</a>
+							<ul class="dropdown-menu" aria-labelledby="menu_maestros">
+								<li><a class="dropdown-item" href="{% url 'listarPuertos' %}">Puertos</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarCombustibles' %}">Combustibles</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarProductos' %}">Productos</a></li>
+							</ul>
+						</li>
+
+						<!-- Menu Operaciones -->
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="menu_operaciones" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								Operaciones</a>
+							<ul class="dropdown-menu" aria-labelledby="menu_operaciones">
+								<li><a class="dropdown-item" href="{% url 'listarCargas' %}">Cargas</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarRemitos' %}">Remitos</a></li>
+								<li><a class="dropdown-item" href="{% url 'listarRanchos' %}">Ranchos</a></li>
+							</ul>
+						</li>
+
+					</ul>
+				</div>
+
+				<!-- Menú derecha -->
+				<div class="collapse navbar-collapse" id="menu_secundario">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="#" id="submenu_admin" role="button"
+								data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="fas fa-user">Opciones</i>
+							</a>
+							<ul class="dropdown-menu" aria-labelledby="submenu_admin">
+								<li><a class="dropdown-item" href="{% url 'admin:index' %}">Administracion</a></li>
+								<li><a class="dropdown-item" href="{% url 'cargarCamionesCsv' %}">Cargar Camiones
+										AFIP</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
 	</div>
-		</div> <!-- del container fluid de los elementos del menú -->	
-	</nav>  <!-- del menú principal -->  
-</div> <!-- del container fluid de la barra superior del menú -->
-<div>
-	{% block content %}
-	<!-- default content text (typically empty) -->
-  {% endblock %}
+	<div>
+		{% if messages %}
+		<div class="container mt-3">
+			{% for message in messages %}
+			<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+				{{ message }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
 
+		{% block content %}
+		{% endblock %}
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+		integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+		integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+		crossorigin="anonymous"></script>
+</body>
 
-</div>
- 
-   
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script> 
-</body>  
 </html>

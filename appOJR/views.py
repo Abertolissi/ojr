@@ -6,21 +6,27 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import ListView, DetailView 
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from appOJR.forms import FormConfiguracion
-from .models import AgenciaMaritima, Armadora, Barco, Camion, Carga, Chofer, Combustible, Configuracion,Puerto, Remito, RemitoVarios, Remolque
-from django.urls import reverse
+from appOJR.forms import (
+    FormConfiguracion, FormAgenciaMaritima, FormPuerto, FormContactoAgencia, 
+    FormCliente, FormTransporte, FormCamion, FormRemolque, FormProducto, 
+    FormRancho, FormArmadora, FormChofer, CargaForm, RemitoForm, UploadCSVForm
+)
+from .models import (
+    AgenciaMaritima, Armadora, Barco, Camion, Carga, Chofer, Cliente, 
+    Combustible, Configuracion, ContactoAgencia, Producto, Puerto, Rancho, 
+    Remito, RemitoVarios, Remolque, Transporte, ArmadoraPuerto
+)
+from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin 
 from django.http import HttpResponse
 from django.template.loader import get_template
 from docxtpl import DocxTemplate
-from .forms import CargaForm, RemitoForm
 from django.http import JsonResponse
 from django.contrib.admin.views.decorators import staff_member_required
 
+from .utils import actualizarCamionesDesdeCsv
 
-
-
-#Para obtener todos los registros de la tabla Barcos
+# --- Vistas Generales ---
 
 def index(request):
     return render(request, 'index.html')
@@ -28,318 +34,443 @@ def index(request):
 def administracion(request):
     return render(request, 'admin')
 
+# --- Helper Mixins ---
 
-# BARCO
+class BaseCRUD(SuccessMessageMixin):
+    template_name_suffix = "" # Elimina el sufijo _form por defecto si se usa template_name
 
-#Para insertar un nuevo Barco en la tabla Barcos 
+# --- BARCO ---
 
-class BarcoCrear(CreateView):
-    template_name ="CrearBarco.html"
-    model = Barco
-    fields = "__all__"
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se 
-        return reverse('listarBarcos')
-    
-#Para modificar un Barco existente de la tabla Barcos
-class BarcoActualizar(SuccessMessageMixin, UpdateView): 
-    template_name ="CrearBarco.html"
-    model = Barco
-    form = Barco
-    fields = "__all__"
-   
-    # Redireccionamos a la página principal tras actualizar el registro
-    def get_success_url(self):
-        return reverse('listarBarcos')
-
-#Para eliminar un Barco de la tabla Barcos 
-class BarcoEliminar(SuccessMessageMixin, DeleteView): 
-    model = Barco
-    form = Barco
-    fields = "__all__"     
- 
-    #Redireccionamos a la página principal tras de eliminar el registro
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se elimine el registro
-        success_message = 'Barco eliminado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarBarcos')
-    
 class BarcosListar(ListView): 
     template_name = "listarBarcos.html"
     model = Barco
 
-#Para obtener todos los campos de un registro de la tabla Barcos 
+class BarcoCrear(BaseCRUD, CreateView):
+    template_name ="CrearBarco.html"
+    model = Barco
+    fields = "__all__"
+    success_url = reverse_lazy('listarBarcos')
+    success_message = "Barco creado correctamente"
+    
+class BarcoActualizar(BaseCRUD, UpdateView): 
+    template_name ="CrearBarco.html"
+    model = Barco
+    fields = "__all__"
+    success_url = reverse_lazy('listarBarcos')
+    success_message = "Barco actualizado correctamente"
+
+class BarcoEliminar(BaseCRUD, DeleteView): 
+    model = Barco
+    success_url = reverse_lazy('listarBarcos')
+    success_message = "Barco eliminado correctamente"
+    
 class BarcoDetalle(DetailView): 
     model = Barco
+    template_name = "appOJR/detallesBarco.html"
 
 
-#CHOFER 
+# --- CHOFER ---
 
-#Para insertar un nuevo Chofer en la tabla Choferes
-
-class ChoferCrear(CreateView):
-    template_name ="CrearChofer.html"
-    model = Chofer
-    fields = "__all__"
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se 
-        return reverse('listarChoferes')
-    
- 
-#Para modificar un Chofer existente de la tabla Choferes
-class ChoferActualizar(SuccessMessageMixin, UpdateView): 
-    template_name ="CrearChofer.html"
-    model = Chofer
-    form = Chofer
-    fields = "__all__"
-    
-    # Redireccionamos a la página principal tras actualizar el registro
-    def get_success_url(self):
-        return reverse('listarChoferes')
-
-#Para eliminar un Chofer de la tabla Choferes
-class ChoferEliminar(SuccessMessageMixin, DeleteView): 
-    model = Chofer
-    form = Chofer
-    fields = "__all__"     
- 
-    #Redireccionamos a la página principal tras de eliminar el registro
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se elimine el registro
-        success_message = 'Chofer eliminado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarChoferes')
-    
 class ChoferesListar(ListView): 
     template_name = "listarChoferes.html"
     model = Chofer
+
+class ChoferCrear(BaseCRUD, CreateView):
+    template_name ="CrearChofer.html"
+    model = Chofer
+    form_class = FormChofer
+    success_url = reverse_lazy('listarChoferes')
+    success_message = "Chofer creado correctamente"
+
+class ChoferActualizar(BaseCRUD, UpdateView): 
+    template_name ="CrearChofer.html"
+    model = Chofer
+    form_class = FormChofer
+    success_url = reverse_lazy('listarChoferes')
+    success_message = "Chofer actualizado correctamente"
+
+class ChoferEliminar(BaseCRUD, DeleteView): 
+    model = Chofer
+    success_url = reverse_lazy('listarChoferes')
+    success_message = "Chofer eliminado correctamente"
 
 class ChoferDetalle(DetailView): 
     model = Chofer
 
 
+# --- ARMADORA ---
 
-#ARMADORA
-
-class ArmadoraCrear(CreateView):
-    template_name ="CrearArmadora.html"
-    model = Armadora
-    fields = "__all__"
-    
-    # Redirigimos a la página principal tras insertar el registro
-    def get_success_url(self):        
-        return reverse('listarArmadoras')
-
-#Para modificar un Armadora existente de la tabla Armadora
-class ArmadoraActualizar(SuccessMessageMixin, UpdateView): 
-    template_name ="CrearArmadora.html"
-    model = Armadora
-    fields = "__all__"
-  
-    # Redireccionamos a la página principal tras actualizar el registro
-    def get_success_url(self):
-        return reverse('listarArmadoras')
-
-#Para eliminar una Armadora de la tabla Armadoras 
-class ArmadoraEliminar(SuccessMessageMixin, DeleteView): 
-    model = Armadora
-    form = Armadora
-    fields = "__all__"     
- 
-    #Redireccionamos a la página principal tras de eliminar el registro
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se elimine el registro
-        success_message = 'Armadora eliminado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarArmadoras')
-    
 class ArmadorasListar(ListView): 
     template_name = "listarArmadoras.html"
     model = Armadora
 
+class ArmadoraCrear(BaseCRUD, CreateView):
+    template_name ="CrearArmadora.html"
+    model = Armadora
+    form_class = FormArmadora
+    success_url = reverse_lazy('listarArmadoras')
+    success_message = "Armadora creada correctamente"
+
+class ArmadoraActualizar(BaseCRUD, UpdateView): 
+    template_name ="CrearArmadora.html"
+    model = Armadora
+    form_class = FormArmadora
+    success_url = reverse_lazy('listarArmadoras')
+    success_message = "Armadora actualizada correctamente"
+
+class ArmadoraEliminar(BaseCRUD, DeleteView): 
+    model = Armadora
+    success_url = reverse_lazy('listarArmadoras')
+    success_message = "Armadora eliminada correctamente"
+
 class ArmadoraDetalle(DetailView): 
     model = Armadora
 
-#CARGA
- 
-class CargaCrear(CreateView):
+
+# --- AGENCIA MARITIMA ---
+
+class AgenciaMaritimaListar(ListView):
+    template_name = "listarAgenciasMaritimas.html"
+    model = AgenciaMaritima
+
+class AgenciaMaritimaCrear(BaseCRUD, CreateView):
+    template_name = "CrearAgenciaMaritima.html"
+    model = AgenciaMaritima
+    form_class = FormAgenciaMaritima
+    success_url = reverse_lazy('listarAgenciasMaritimas')
+    success_message = "Agencia Marítima creada correctamente"
+
+class AgenciaMaritimaActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearAgenciaMaritima.html"
+    model = AgenciaMaritima
+    form_class = FormAgenciaMaritima
+    success_url = reverse_lazy('listarAgenciasMaritimas')
+    success_message = "Agencia Marítima actualizada correctamente"
+
+class AgenciaMaritimaEliminar(BaseCRUD, DeleteView):
+    model = AgenciaMaritima
+    success_url = reverse_lazy('listarAgenciasMaritimas')
+    success_message = "Agencia Marítima eliminada correctamente"
+
+
+# --- PUERTO ---
+
+class PuertoListar(ListView):
+    template_name = "listarPuertos.html"
+    model = Puerto
+
+class PuertoCrear(BaseCRUD, CreateView):
+    template_name ="CrearPuerto.html"
+    model = Puerto
+    form_class = FormPuerto
+    success_url = reverse_lazy('listarPuertos')
+    success_message = "Puerto creado correctamente"
+
+class PuertoActualizar(BaseCRUD, UpdateView):
+    template_name ="CrearPuerto.html"
+    model = Puerto
+    form_class = FormPuerto
+    success_url = reverse_lazy('listarPuertos')
+    success_message = "Puerto actualizado correctamente"
+
+class PuertoEliminar(BaseCRUD, DeleteView):
+    model = Puerto
+    success_url = reverse_lazy('listarPuertos')
+    success_message = "Puerto eliminado correctamente"
+
+
+# --- CONTACTO AGENCIA ---
+
+class ContactoAgenciaListar(ListView):
+    template_name = "listarContactosAgencia.html"
+    model = ContactoAgencia
+
+class ContactoAgenciaCrear(BaseCRUD, CreateView):
+    template_name = "CrearContactoAgencia.html"
+    model = ContactoAgencia
+    form_class = FormContactoAgencia
+    success_url = reverse_lazy('listarContactosAgencia')
+    success_message = "Contacto creado correctamente"
+
+class ContactoAgenciaActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearContactoAgencia.html"
+    model = ContactoAgencia
+    form_class = FormContactoAgencia
+    success_url = reverse_lazy('listarContactosAgencia')
+    success_message = "Contacto actualizado correctamente"
+
+class ContactoAgenciaEliminar(BaseCRUD, DeleteView):
+    model = ContactoAgencia
+    success_url = reverse_lazy('listarContactosAgencia')
+    success_message = "Contacto eliminado correctamente"
+
+
+# --- CLIENTE ---
+
+class ClienteListar(ListView):
+    template_name = "listarClientes.html"
+    model = Cliente
+
+class ClienteCrear(BaseCRUD, CreateView):
+    template_name = "CrearCliente.html"
+    model = Cliente
+    form_class = FormCliente
+    success_url = reverse_lazy('listarClientes')
+    success_message = "Cliente creado correctamente"
+
+class ClienteActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearCliente.html"
+    model = Cliente
+    form_class = FormCliente
+    success_url = reverse_lazy('listarClientes')
+    success_message = "Cliente actualizado correctamente"
+
+class ClienteEliminar(BaseCRUD, DeleteView):
+    model = Cliente
+    success_url = reverse_lazy('listarClientes')
+    success_message = "Cliente eliminado correctamente"
+
+
+# --- TRANSPORTE ---
+
+class TransporteListar(ListView):
+    template_name = "listarTransportes.html"
+    model = Transporte
+
+class TransporteCrear(BaseCRUD, CreateView):
+    template_name = "CrearTransporte.html"
+    model = Transporte
+    form_class = FormTransporte
+    success_url = reverse_lazy('listarTransportes')
+    success_message = "Transporte creado correctamente"
+
+class TransporteActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearTransporte.html"
+    model = Transporte
+    form_class = FormTransporte
+    success_url = reverse_lazy('listarTransportes')
+    success_message = "Transporte actualizado correctamente"
+
+class TransporteEliminar(BaseCRUD, DeleteView):
+    model = Transporte
+    success_url = reverse_lazy('listarTransportes')
+    success_message = "Transporte eliminado correctamente"
+
+
+# --- CAMION ---
+
+class CamionListar(ListView):
+    template_name = "listarCamiones.html"
+    model = Camion
+
+class CamionCrear(BaseCRUD, CreateView):
+    template_name ="CrearCamion.html"
+    model = Camion
+    form_class = FormCamion
+    success_url = reverse_lazy('listarCamiones')
+    success_message = "Camión creado correctamente"
+
+class CamionActualizar(BaseCRUD, UpdateView):
+    template_name ="CrearCamion.html"
+    model = Camion
+    form_class = FormCamion
+    success_url = reverse_lazy('listarCamiones')
+    success_message = "Camión actualizado correctamente"
+
+class CamionEliminar(BaseCRUD, DeleteView):
+    model = Camion
+    success_url = reverse_lazy('listarCamiones')
+    success_message = "Camión eliminado correctamente"
+
+
+# --- REMOLQUE ---
+
+class RemolqueListar(ListView):
+    template_name = "listarRemolques.html"
+    model = Remolque
+
+class RemolqueCrear(BaseCRUD, CreateView):
+    template_name = "CrearRemolque.html"
+    model = Remolque
+    form_class = FormRemolque
+    success_url = reverse_lazy('listarRemolques')
+    success_message = "Remolque creado correctamente"
+
+class RemolqueActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearRemolque.html"
+    model = Remolque
+    form_class = FormRemolque
+    success_url = reverse_lazy('listarRemolques')
+    success_message = "Remolque actualizado correctamente"
+
+class RemolqueEliminar(BaseCRUD, DeleteView):
+    model = Remolque
+    success_url = reverse_lazy('listarRemolques')
+    success_message = "Remolque eliminado correctamente"
+
+
+# --- PRODUCTO ---
+
+class ProductoListar(ListView):
+    template_name = "listarProductos.html"
+    model = Producto
+
+class ProductoCrear(BaseCRUD, CreateView):
+    template_name = "CrearProducto.html"
+    model = Producto
+    form_class = FormProducto
+    success_url = reverse_lazy('listarProductos')
+    success_message = "Producto creado correctamente"
+
+class ProductoActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearProducto.html"
+    model = Producto
+    form_class = FormProducto
+    success_url = reverse_lazy('listarProductos')
+    success_message = "Producto actualizado correctamente"
+
+class ProductoEliminar(BaseCRUD, DeleteView):
+    model = Producto
+    success_url = reverse_lazy('listarProductos')
+    success_message = "Producto eliminado correctamente"
+
+
+# --- RANCHO ---
+
+class RanchoListar(ListView):
+    template_name = "listarRanchos.html"
+    model = Rancho
+
+class RanchoCrear(BaseCRUD, CreateView):
+    template_name = "CrearRancho.html"
+    model = Rancho
+    form_class = FormRancho
+    success_url = reverse_lazy('listarRanchos')
+    success_message = "Rancho creado correctamente"
+
+class RanchoActualizar(BaseCRUD, UpdateView):
+    template_name = "CrearRancho.html"
+    model = Rancho
+    form_class = FormRancho
+    success_url = reverse_lazy('listarRanchos')
+    success_message = "Rancho actualizado correctamente"
+
+class RanchoEliminar(BaseCRUD, DeleteView):
+    model = Rancho
+    success_url = reverse_lazy('listarRanchos')
+    success_message = "Rancho eliminado correctamente"
+
+# --- COMBUSTIBLE ---
+
+class CombustibleListar(ListView):
+    template_name = "listarCombustibles.html"
+    model = Combustible
+
+class CombustibleCrear(BaseCRUD, CreateView):
+    template_name ="CrearCombustible.html"
+    model = Combustible 
+    fields = "__all__"
+    success_url = reverse_lazy('listarCombustibles')
+    success_message = "Combustible creado correctamente"
+
+class CombustibleActualizar(BaseCRUD, UpdateView):
+    template_name ="CrearCombustible.html"
+    model = Combustible 
+    fields = "__all__"
+    success_url = reverse_lazy('listarCombustibles')
+    success_message = "Combustible actualizado correctamente"
+
+class CombustibleEliminar(BaseCRUD, DeleteView):
+    model = Combustible
+    success_url = reverse_lazy('listarCombustibles')
+    success_message = "Combustible eliminado correctamente"
+
+
+# --- CARGA ---
+
+class CargaListar(ListView):
+    queryset = Carga.objects.order_by('-fechaInicio')
+    template_name = "listarCargas.html"
+
+class CargaCrear(BaseCRUD, CreateView):
     template_name ="CrearCarga.html"
     model = Carga
     fields = "__all__"
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se 
-        success_message = 'Carga creada correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarCargas')
+    success_url = reverse_lazy('listarCargas')
+    success_message = "Carga creada correctamente"
     
-class CargaRemito(CreateView):
-
+class CargaRemito(BaseCRUD, CreateView):
     model = Carga
     fields = ['barco', 'puerto', 'combustible', 'sitioPuerto']
     template_name = 'CrearCargaRemito.html'
-    success_url = '/'
+    success_url = reverse_lazy('listarCargas')
+    success_message = "Carga creada correctamente"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener las listas de camiones, choferes y remolques de la base de datos
         context['camiones'] = Camion.objects.all()
         context['choferes'] = Chofer.objects.all()
         context['remolques'] = Remolque.objects.all()
         return context
     
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se carga correctamente
-        success_message = 'Carga creada correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarCargas')  
-    
-    
-#Para modificar un Carga existente de la tabla Cargas
-class CargaActualizar(SuccessMessageMixin, UpdateView): 
+class CargaActualizar(BaseCRUD, UpdateView): 
     template_name ="CrearCarga.html"
     model = Carga
     fields = "__all__"
-    # Mensaje que se mostrará cuando se actualice el registro
-    success_message = 'Carga actualizado correctamente.'
- 
-    # Redireccionamos a la página principal tras actualizar el registro
-    def get_success_url(self):
-        return reverse('listarCargas')
+    success_url = reverse_lazy('listarCargas')
+    success_message = "Carga actualizada correctamente"
 
-
-#Para eliminar una Armadora de la tabla Armadoras 
-class CargaEliminar(SuccessMessageMixin, DeleteView): 
+class CargaEliminar(BaseCRUD, DeleteView): 
     model = Carga
-    form = Carga
-    fields = "__all__"     
- 
-    #Redireccionamos a la página principal tras de eliminar el registro
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se elimine el registro
-        success_message = 'Carga eliminada correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarCargas')
-
-class CargaListar(ListView):
-    queryset = Carga.objects.order_by('-fechaInicio')
-    template_name = "listarCargas.html"
-    #model = Carga
+    success_url = reverse_lazy('listarCargas')
+    success_message = "Carga eliminada correctamente"
 
 class CargaDetalle(DetailView): 
     model = Carga
 
-#REMITO
- 
-class RemitoCombustibleCrear(CreateView):
+
+# --- REMITO ---
+
+class RemitosListar(ListView):
+    queryset = Remito.objects.all()
+    template_name = "listarRemitos.html"
+
+class RemitoCombustibleCrear(BaseCRUD, CreateView):
     template_name ="CrearRemitoCombustible.html"
     model = Remito
     fields = "__all__"
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se 
-        success_message = 'Remito creado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarRemitos')
+    success_url = reverse_lazy('listarRemitos')
+    success_message = "Remito Combustible creado correctamente"
 
-class RemitoVariosCrear(CreateView):
+class RemitoVariosCrear(BaseCRUD, CreateView):
     template_name ="CrearRemitoVarios.html"
     model = RemitoVarios
     fields = "__all__"
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se 
-        success_message = 'Remito creado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarRemitos')
-    
+    success_url = reverse_lazy('listarRemitos')
+    success_message = "Remito Varios creado correctamente"
 
-
-#Para modificar un Remito existente de la tabla Remitos
-class RemitoActualizar(SuccessMessageMixin, UpdateView): 
+class RemitoActualizar(BaseCRUD, UpdateView): 
     template_name ="CrearRemitoCombustible.html"
     model = Remito
     fields = "__all__"
-    # Mensaje que se mostrará cuando se actualice el registro
-    success_message = 'Remito actualizado correctamente.'
- 
-    # Redireccionamos a la página principal tras actualizar el registro
-    def get_success_url(self):
-        return reverse('listarRemitos')
+    success_url = reverse_lazy('listarRemitos')
+    success_message = "Remito actualizado correctamente"
 
-
-#Para eliminar un remito de Remitos
-class RemitoEliminar(SuccessMessageMixin, DeleteView): 
+class RemitoEliminar(BaseCRUD, DeleteView): 
     model = Remito
-    form = Remito
-    fields = "__all__"     
- 
-    #Redireccionamos a la página principal tras de eliminar el registro
-    def get_success_url(self):
-        # Mensaje que se mostrará cuando se elimine el registro
-        success_message = 'Remito eliminado correctamente.'
-        messages.success (self.request, (success_message))       
-        return reverse('listarRemitos')
+    success_url = reverse_lazy('listarRemitos')
+    success_message = "Remito eliminado correctamente"
 
-class RemitosListar(ListView):
-    # queryset = Remito.objects.order_by('-fecha')
-    queryset = Remito.objects.all()
-    template_name = "listarRemitos.html"
-    
 class RemitoDetalle(DetailView): 
     model = Remito
 
-#VISTAS VARIAS
 
+# --- CONFIGURACION y OTROS ---
 
-class PuertoCrear(CreateView):
-    template_name ="CrearPuerto.html"
-    model = Puerto
-    fields = "__all__"
-
-    def get_success_url(self):
-        return reverse('index' )
-
-class CamionCrear(CreateView):
-    template_name ="CrearCamion.html"
-    model = Camion
-    fields = "__all__"
-
-    def get_success_url(self):
-        return reverse('index' )
-
-class CombustibleCrear(CreateView):
-    template_name ="CrearCombustible.html"
-    model = Combustible 
-    fields = "__all__"
-
-    def get_success_url(self):
-        return reverse('index' )
-    
-class AgenciaMaritimaCrear(CreateView):
-    template_name ="CrearAgenciaMaritima.html"
-    model = AgenciaMaritima
-    fields = "__all__"
-
-    def get_success_url(self):
-        return reverse('index' )
-    
-def getCamiones(request):
-    transporte_id = request.GET.get('transporte_id')
-    camiones = Camion.objects.filter(transporte_id=transporte_id,habilitadoAFIP=True).values_list('id', 'patente')
-    camiones_dict = dict(camiones)
-    return JsonResponse({'camiones': camiones_dict})
-
-def getRemolques(request):
-    transporte_id = request.GET.get('transporte_id')
-    remolques = Remolque.objects.filter(transporte_id=transporte_id).values_list('id', 'patente')
-    remolques_dict = dict(remolques)
-    return JsonResponse({'remolques': remolques_dict})
-
-#Para modificar la configuracion
 class ConfiguracionPantalla(SuccessMessageMixin, UpdateView): 
     template_name ="Configuracion.html"
     model = Configuracion
     fields = "__all__"
-    # Redireccionamos a la página principal tras actualizar el registro
     def get_success_url(self):
         return reverse('index')
     
@@ -353,12 +484,44 @@ def formConfiguracion(request):
     context = {'form': form }      
     return render(request, 'Configuracion.html', context)
 
-#Ejemplo de redirección a una página HTML existente
 def CerrarSesion(request):
     return render(request, 'logout.html')
 
+def cargarCamionesView(request):
+    if request.method == 'POST':
+        form = UploadCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            csv_file = request.FILES['csv_file']
+            actualizarCamionesDesdeCsv(csv_file)
+            messages.success(request, 'Los camiones han sido actualizados correctamente.')
+            return redirect('upload_csv')
+    else:
+        form = UploadCSVForm()
+    return render(request, 'cargarCamionesAFIP.html', {'form': form})
+
+@staff_member_required
+def admin_cargarCamionesCsv_redirect(request):
+    return redirect('cargarCamionesCsv')
+
+
+# --- AJAX Vistas ---
+
+def getCamiones(request):
+    transporte_id = request.GET.get('transporte_id')
+    camiones = Camion.objects.filter(transporte_id=transporte_id,habilitadoAFIP=True).values_list('id', 'patente')
+    camiones_dict = dict(camiones)
+    return JsonResponse({'camiones': camiones_dict})
+
+def getRemolques(request):
+    transporte_id = request.GET.get('transporte_id')
+    remolques = Remolque.objects.filter(transporte_id=transporte_id).values_list('id', 'patente')
+    remolques_dict = dict(remolques)
+    return JsonResponse({'remolques': remolques_dict})
+
+
+# --- GENERACION DE DOCUMENTOS (Sin Cambios) ---
+
 def generarRemitoCombustible(request,idRemito, impresora):
-       
     remito = Remito.objects.get(id=idRemito )
     response = HttpResponse(content_type='application/msword')
     response['Content-Disposition'] = 'attachment; filename="RemitoNro"' + str(remito.numero) + '".docx"'
@@ -372,7 +535,6 @@ def generarRemitoCombustible(request,idRemito, impresora):
     factor3 = (decimal.Decimal(594.5418)/(densidad**2))
     factor4= (decimal.Decimal(186.9696)/(densidad**2))+(decimal.Decimal(0.4862)/densidad)
 
-    
     if (densidad <decimal.Decimal(770.8)):
         VCF = round(math.exp(-factor1*(remito.temperatura-15)*(1+decimal.Decimal(0.8)*factor1*(remito.temperatura-15))),5)
     elif (densidad <decimal.Decimal(787.5)):      
@@ -414,7 +576,6 @@ def generarRemitoCombustible(request,idRemito, impresora):
     return response
 
 def generarRemitoVarios(request,idRemito, impresora):
-       
     remito = RemitoVarios.objects.get(id=idRemito )
     response = HttpResponse(content_type='application/msword')
     response['Content-Disposition'] = 'attachment; filename="RemitoNro"' + str(remito.numero) + '".docx"'
@@ -445,7 +606,6 @@ def generarRemitoVarios(request,idRemito, impresora):
     return response
 
 def generarDocumento(request,idCarga):
-       
     carga = Carga.objects.get(id=idCarga )
     if carga.puerto.nombre== 'Camarones':
         response=generarDocumentosCamarones(idCarga);
@@ -455,9 +615,7 @@ def generarDocumento(request,idCarga):
         response=generarDocumentosRawson(idCarga);
     return response
 
-
 def generarDocumentosCamarones(idCarga):
-
     response = HttpResponse(content_type='application/msword')
     response['Content-Disposition'] = 'attachment; filename="Formularios-Camarones.docx"'
 
@@ -491,10 +649,8 @@ def generarDocumentosCamarones(idCarga):
     doc.render(context)
     doc.save(response)
     return response
-    
 
 def generarDocumentosPuertoMadryn(idCarga):
-  
     response = HttpResponse(content_type='application/msword')
     response['Content-Disposition'] = 'attachment; filename="Formularios-PuertoMadryn.docx"'
 
@@ -525,9 +681,7 @@ def generarDocumentosPuertoMadryn(idCarga):
     doc.save(response)
     return response
 
-
 def generarDocumentosRawson(idCarga):
-    
     response = HttpResponse(content_type='application/msword')
     response['Content-Disposition'] = 'attachment; filename="Formularios-Rawson.docx"'
 
@@ -564,25 +718,3 @@ def generarDocumentosRawson(idCarga):
     doc.render(context)
     doc.save(response)
     return response
-
-from .forms import UploadCSVForm
-from .utils import actualizarCamionesDesdeCsv
-
-def cargarCamionesView(request):
-    if request.method == 'POST':
-        form = UploadCSVForm(request.POST, request.FILES)
-        if form.is_valid():
-            csv_file = request.FILES['csv_file']
-            actualizarCamionesDesdeCsv(csv_file)
-            messages.success(request, 'Los camiones han sido actualizados correctamente.')
-            return redirect('upload_csv')
-    else:
-        form = UploadCSVForm()
-    return render(request, 'cargarCamionesAFIP.html', {'form': form})
-
-
-@staff_member_required
-def admin_cargarCamionesCsv_redirect(request):
-    return redirect('cargarCamionesCsv')
-
-

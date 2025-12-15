@@ -1,0 +1,41 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Listado de Ranchos</h2>
+    <a href="{% url 'nuevoRancho' %}" class="btn btn-primary mb-3">Nuevo Rancho</a>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Barco</th>
+                <th>Puerto</th>
+                <th>Fecha Carga</th>
+                <th>Litros</th>
+                <th>Enviado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            <tr>
+                <td>{{ object.barco }}</td>
+                <td>{{ object.puerto }}</td>
+                <td>{{ object.fechaCarga }}</td>
+                <td>{{ object.litros }}</td>
+                <td>{% if object.emailEnviado %}Sí{% else %}No{% endif %}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="{% url 'actualizarRancho' object.id %}" class="btn btn-sm btn-primary">Editar</a>
+                        <form method="POST" action="{% url 'eliminarRancho' object.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('¿Está seguro de eliminar este registro?');">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

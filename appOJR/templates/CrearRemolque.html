@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{% if object %}Editar{% else %}Nuevo{% endif %} Remolque</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+        <a href="{% url 'listarRemolques' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
