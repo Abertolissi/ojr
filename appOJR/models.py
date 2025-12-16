@@ -240,22 +240,39 @@ Transporte_CHOICES = (
 	('TRC' ,'Transcont'))
 
 class Remito(models.Model):
-	carga = models.ForeignKey(Carga, db_column='carga_id', on_delete= models.SET_NULL, null=True)
-	empresa = models.CharField(max_length=10,null=False, choices=Empresa_CHOICES,verbose_name="empresa", default="") 
-	transporte = models.ForeignKey(Transporte, on_delete=models.CASCADE, null=True)
-	numero = models.IntegerField(null=True, verbose_name="numero", default="1")
-	chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, null=True)
-	camion = models.ForeignKey(Camion, on_delete=models.CASCADE, null=True)
-	remolque = models.ForeignKey(Remolque, on_delete=models.CASCADE, null=True)
-	cantidadBarco = models.DecimalField(null=True, verbose_name="cantidadBarco", default="1", max_digits=30,decimal_places=2)
-	cantidadDeposito = models.DecimalField(null=True, verbose_name="cantidadDeposito", default="1",max_digits=30,decimal_places=2)
-	
-	class Meta:
-		db_table = 'Remito' # Nombre que tendrá la tabla que se creará en la base de datos en la Base de Datos
+        carga = models.ForeignKey(Carga, db_column='carga_id', on_delete= models.SET_NULL, null=True)
+        empresa = models.CharField(max_length=10,null=False, choices=Empresa_CHOICES,verbose_name="empresa", default="")
+        transporte = models.ForeignKey(Transporte, on_delete=models.CASCADE, null=True)
+        numero = models.IntegerField(null=True, verbose_name='numero', default='1')
+        chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, null=True)
+        camion = models.ForeignKey(Camion, on_delete=models.CASCADE, null=True)
+        remolque = models.ForeignKey(Remolque, on_delete=models.CASCADE, null=True)
+        cantidadBarco = models.DecimalField(null=True, verbose_name='cantidadBarco', default='1', max_digits=30,decimal_places=2)
+        cantidadDeposito = models.DecimalField(null=True, verbose_name="cantidadDeposito", default="1",max_digits=30,decimal_places=2)
+
+        class Meta:
+                db_table = 'Remito' # Nombre que tendrá la tabla que se creará en la base de datos en la Base de Datos
+
+
+class TransferenciaDeposito(models.Model):
+        fecha = models.DateTimeField(default=timezone.now, verbose_name="fecha")
+        combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE)
+        deposito_origen = models.CharField(max_length=100, null=False, verbose_name="deposito_origen", default="")
+        deposito_destino = models.CharField(max_length=100, null=False, verbose_name="deposito_destino", default="")
+        cantidad = models.DecimalField(max_digits=30, decimal_places=2, null=True, verbose_name="cantidad", default="0")
+        chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, null=True)
+        camion = models.ForeignKey(Camion, on_delete=models.CASCADE, null=True)
+        observaciones = models.CharField(max_length=255, null=True, blank=True, verbose_name="observaciones", default="")
+
+        def __str__(self):
+                return f"Transferencia {self.combustible.nombre} {self.deposito_origen} -> {self.deposito_destino}"
+
+        class Meta:
+                db_table = 'TransferenciaDeposito'
 
 
 Unidad_CHOICES = (
-	('TN ', 'TN'),
+        ('TN ', 'TN'),
     ('LTS' ,'LTS'),
 	('MT2' ,'MT2'))
 
