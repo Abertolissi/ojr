@@ -19,7 +19,7 @@ from docxtpl import DocxTemplate
 from .models import (
     AgenciaMaritima, Armadora, ArmadoraPuerto, Barco, Camion, Carga, Chofer,
     Cliente, Combustible, Configuracion, ContactoAgencia, Producto, Puerto,
-    Rancho, Remito, RemitoVarios, Remolque, Transporte
+    Rancho, Remito, RemitoVarios, Remolque, TransferenciaDeposito, Transporte
 )
 from .views import admin_cargarCamionesCsv_redirect
 
@@ -513,6 +513,15 @@ class RemolqueAdmin(admin.ModelAdmin):
     list_display = ('id', 'marca', 'patente')
     search_fields = ('id', 'patente')
 
+
+class TransferenciaDepositoAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'fecha', 'combustible', 'deposito_origen', 'deposito_destino',
+        'cantidad', 'chofer', 'camion'
+    )
+    search_fields = ('id', 'deposito_origen', 'deposito_destino')
+    list_filter = ('combustible',)
+
 # ==============================================================================
 # CUSTOM ADMIN SITE
 # ==============================================================================
@@ -560,6 +569,7 @@ admin.site.register(Puerto)
 admin.site.register(Rancho, RanchoAdmin)
 admin.site.register(RemitoVarios, RemitoVariosAdmin)
 admin.site.register(Remolque, RemolqueAdmin)
+admin.site.register(TransferenciaDeposito, TransferenciaDepositoAdmin)
 admin.site.register(Transporte)
 
 # Registro en Admin Custom (MyAdminSite)
@@ -582,6 +592,7 @@ model_admin_pairs = [
     (Rancho, RanchoAdmin),
     (RemitoVarios, RemitoVariosAdmin),
     (Remolque, RemolqueAdmin),
+    (TransferenciaDeposito, TransferenciaDepositoAdmin),
     (Transporte, None),
 ]
 
