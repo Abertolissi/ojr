@@ -1,8 +1,6 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/index.html" %}
 
 {% block content %}
-<p>Bienvenido a la administración personalizada.</p>
-
 {% if custom_menu_links %}
     <ul>
         {% for link in custom_menu_links %}

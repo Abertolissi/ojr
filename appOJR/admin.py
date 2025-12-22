@@ -528,6 +528,7 @@ class TransferenciaDepositoAdmin(admin.ModelAdmin):
 
 class MyAdminSite(admin.AdminSite):
     site_header = 'Aplicacion OJR'
+    index_template = 'admin/custom_index.html'
     
     def get_urls(self):
         urls = super().get_urls()
