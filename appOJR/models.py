@@ -254,11 +254,26 @@ class Remito(models.Model):
                 db_table = 'Remito' # Nombre que tendrá la tabla que se creará en la base de datos en la Base de Datos
 
 
+class Deposito(models.Model):
+    nombre = models.CharField(max_length=100, null=False, verbose_name="nombre", default="")
+    direccion = models.CharField(max_length=100, blank=True, verbose_name="direccion", default="")
+    fecha_alta = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        db_table = 'Deposito'
+        ordering = ["nombre"]
+
 class TransferenciaDeposito(models.Model):
         fecha = models.DateTimeField(default=timezone.now, verbose_name="fecha")
         combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE)
         deposito_origen = models.CharField(max_length=100, null=False, verbose_name="deposito_origen", default="")
         deposito_destino = models.CharField(max_length=100, null=False, verbose_name="deposito_destino", default="")
+        deposito_origen_ref = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_origen', verbose_name="deposito_origen_ref")
+        deposito_destino_ref = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_destino', verbose_name="deposito_destino_ref")
         cantidad = models.DecimalField(max_digits=30, decimal_places=2, null=True, verbose_name="cantidad", default="0")
         chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, null=True)
         camion = models.ForeignKey(Camion, on_delete=models.CASCADE, null=True)

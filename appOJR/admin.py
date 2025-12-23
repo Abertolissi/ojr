@@ -19,7 +19,8 @@ from docxtpl import DocxTemplate
 from .models import (
     AgenciaMaritima, Armadora, ArmadoraPuerto, Barco, Camion, Carga, Chofer,
     Cliente, Combustible, Configuracion, ContactoAgencia, Producto, Puerto,
-    Rancho, Remito, RemitoVarios, Remolque, TransferenciaDeposito, Transporte
+    Rancho, Remito, RemitoVarios, Remolque, TransferenciaDeposito, Transporte,
+    Deposito
 )
 from .views import admin_cargarCamionesCsv_redirect
 
@@ -499,6 +500,10 @@ class ContactoAgenciaAdmin(admin.ModelAdmin):
     list_display = ('id', 'nombre', 'apellido', 'agenciaMaritima', 'correoElectronico', 'enviaRancho')
     search_fields = ('id', 'agenciaMaritima__nombre', 'correoElectronico')
 
+class DepositoAdmin(admin.ModelAdmin):
+    list_display = ('id', 'nombre', 'direccion')
+    search_fields = ('id', 'nombre')
+
 class RanchoAdmin(admin.ModelAdmin):
     list_display = ('id', 'barco', 'puerto', 'fechaCarga', 'litros', 'emailEnviado')
     search_fields = ('id', 'barco__nombre')
@@ -516,10 +521,10 @@ class RemolqueAdmin(admin.ModelAdmin):
 
 class TransferenciaDepositoAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'fecha', 'combustible', 'deposito_origen', 'deposito_destino',
+        'id', 'fecha', 'combustible', 'deposito_origen_ref', 'deposito_destino_ref',
         'cantidad', 'chofer', 'camion'
     )
-    search_fields = ('id', 'deposito_origen', 'deposito_destino')
+    search_fields = ('id', 'deposito_origen_ref__nombre', 'deposito_destino_ref__nombre')
     list_filter = ('combustible',)
 
 # ==============================================================================
@@ -570,6 +575,7 @@ admin.site.register(Puerto)
 admin.site.register(Rancho, RanchoAdmin)
 admin.site.register(RemitoVarios, RemitoVariosAdmin)
 admin.site.register(Remolque, RemolqueAdmin)
+admin.site.register(Deposito, DepositoAdmin)
 admin.site.register(TransferenciaDeposito, TransferenciaDepositoAdmin)
 admin.site.register(Transporte)
 
@@ -595,6 +601,7 @@ model_admin_pairs = [
     (Remolque, RemolqueAdmin),
     (TransferenciaDeposito, TransferenciaDepositoAdmin),
     (Transporte, None),
+    (Deposito, DepositoAdmin),
 ]
 
 for model, admin_class in model_admin_pairs:
