@@ -229,6 +229,7 @@ class Carga(models.Model):
 	ordenCompra =  models.CharField(null=True, blank = True, max_length=100,verbose_name="ordenCompra")
 	fechaInicio = models.DateField(default=timezone.now)
 	horaInicio = models.TimeField(null=True, blank=True)
+	fechaRemito = models.DateField(default=timezone.now)
 	class Meta:
 		db_table = 'Carga' # Nombre que tendrá la tabla que se creará en la base de datos en la Base de Datos
 

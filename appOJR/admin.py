@@ -120,9 +120,9 @@ def generarRemito(remito):
         'exentoRancho': exentoRancho,
         'nroRancho': nroRancho,
         'ordenCompra': ordenCompra,
-        'dia': remito.carga.fechaInicio.day,
-        'mes': remito.carga.fechaInicio.month,
-        'ano': remito.carga.fechaInicio.year
+        'dia': remito.carga.fechaRemito.day,
+        'mes': remito.carga.fechaRemito.month,
+        'ano': remito.carga.fechaRemito.year
     }
     doc.render(context)
     return doc
