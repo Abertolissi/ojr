@@ -271,10 +271,8 @@ class Deposito(models.Model):
 class TransferenciaDeposito(models.Model):
         fecha = models.DateTimeField(default=timezone.now, verbose_name="fecha")
         combustible = models.ForeignKey(Combustible, on_delete=models.CASCADE)
-        deposito_origen = models.CharField(max_length=100, null=False, verbose_name="deposito_origen", default="")
-        deposito_destino = models.CharField(max_length=100, null=False, verbose_name="deposito_destino", default="")
-        deposito_origen_ref = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_origen', verbose_name="deposito_origen_ref")
-        deposito_destino_ref = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_destino', verbose_name="deposito_destino_ref")
+        deposito_origen = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_origen', verbose_name="deposito_origen")
+        deposito_destino = models.ForeignKey(Deposito, on_delete=models.SET_NULL, null=True, blank=True, related_name='transferencias_destino', verbose_name="deposito_destino")
         cantidad = models.DecimalField(max_digits=30, decimal_places=2, null=True, verbose_name="cantidad", default="0")
         chofer = models.ForeignKey(Chofer, on_delete=models.CASCADE, null=True)
         camion = models.ForeignKey(Camion, on_delete=models.CASCADE, null=True)

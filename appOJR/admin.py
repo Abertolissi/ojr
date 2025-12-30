@@ -280,6 +280,62 @@ def generarDocumentosRawson(idCarga, cantidadCombustible, cantidadCamiones, remi
     doc.render(context)
     return doc
 
+def generarDocumentoTransferencia(idTransferencia):
+    transferencia = TransferenciaDeposito.objects.get(id=idTransferencia)
+    response = HttpResponse(content_type='application/msword')
+    filename = f"Transferencia_{transferencia.id}.docx"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    # Usamos RemitoVariosOJR como base
+    template_name = 'RemitoVariosOJR.docx' 
+    doc = DocxTemplate(os.path.join(os.getcwd(), 'appOJR', 'templates', template_name))
+    
+    destinatario_nombre = ""
+    if transferencia.deposito_destino:
+        destinatario_nombre = transferencia.deposito_destino.nombre
+
+    direccion_entrega = ""
+    if transferencia.deposito_destino and transferencia.deposito_destino.direccion:
+        direccion_entrega = transferencia.deposito_destino.direccion
+
+    transporte_nombre = ""
+    if transferencia.camion and transferencia.camion.transporte:
+        transporte_nombre = transferencia.camion.transporte.nombre
+
+    # Handle potentially missing relationships safely
+    apellido_chofer = transferencia.chofer.apellido if transferencia.chofer else ""
+    nombre_chofer = transferencia.chofer.nombre if transferencia.chofer else ""
+    dni_chofer = transferencia.chofer.dni if transferencia.chofer else ""
+    
+    marca_camion = transferencia.camion.marca if transferencia.camion else ""
+    patente_camion = transferencia.camion.patente if transferencia.camion else ""
+
+    context = {
+        'transporte': transporte_nombre,
+        'destinatario': destinatario_nombre,
+        'cuit': "", # No hay CUIT especifico de deposito destino interno usualmente
+        'lugarEntrega': direccion_entrega,
+        'IVA': "Traslado Interno",
+        'cantidad': transferencia.cantidad,
+        'unidad': "LTS", # Default a Litros para combustibles
+        'producto': transferencia.combustible.nombre,
+        'apellidoChofer': apellido_chofer,
+        'nombreChofer': nombre_chofer,
+        'dniChofer': dni_chofer,
+        'marcaCamion': marca_camion,
+        'patenteC': patente_camion,
+        'marcaR': "", # Transferencia no tiene remolque
+        'patenteR': "",
+        'observacion': transferencia.observaciones or "",
+        'dia': transferencia.fecha.day,
+        'mes': transferencia.fecha.month,
+        'ano': transferencia.fecha.year
+    }
+    
+    doc.render(context)
+    doc.save(response)
+    return response
+
 def generarDocumentosDeseado(idCarga, cantidadCombustible, cantidadCamiones):
     doc = DocxTemplate(os.path.join(os.getcwd(), 'appOJR', 'templates', 'Formularios-Deseado.docx'))
     
@@ -451,6 +507,11 @@ def imprimirRemitoVariosAction(modeladmin, request, queryset):
         return generarRemitoVarios(obj.id)
 imprimirRemitoVariosAction.short_description = "Imprime Remitos Varios"
 
+def imprimirFormularioTransferencia(modeladmin, request, queryset):
+    for obj in queryset:
+        return generarDocumentoTransferencia(obj.id)
+imprimirFormularioTransferencia.short_description = "Imprime Formulario Transferencia"
+
 # ==============================================================================
 # INLINES
 # ==============================================================================
@@ -521,11 +582,13 @@ class RemolqueAdmin(admin.ModelAdmin):
 
 class TransferenciaDepositoAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'fecha', 'combustible', 'deposito_origen_ref', 'deposito_destino_ref',
+        'id', 'fecha', 'combustible', 'deposito_origen', 'deposito_destino',
         'cantidad', 'chofer', 'camion'
     )
-    search_fields = ('id', 'deposito_origen_ref__nombre', 'deposito_destino_ref__nombre')
+    search_fields = ('id', 'deposito_origen__nombre', 'deposito_destino__nombre')
+
     list_filter = ('combustible',)
+    actions = [imprimirFormularioTransferencia]
 
 # ==============================================================================
 # CUSTOM ADMIN SITE
